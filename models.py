@@ -38,7 +38,7 @@ class User(db.Model):
         return f"<User: {u.username}, Email: {u.email}, Name: {u.first_name} {u.last_name}>"
     
     @classmethod
-    def register_user(cls):
+    def register_user(cls, form):
         """Sign up user with hashed password"""
         # Grab all form inputs
         username = form.username.data
@@ -48,7 +48,7 @@ class User(db.Model):
         last_name = form.last_name.data
         
         #Hash password into byte string 
-        hashed = bcrypt.generate_password_hash(pwd)
+        hashed = bcrypt.generate_password_hash(password)
         
         hashed_utf8 = hashed.decode("utf8")
         
@@ -56,4 +56,11 @@ class User(db.Model):
     
     @classmethod
     def authenticate(cls, username, pwd):
+        """Validate that the user exists in our database, then compare passwords. 
+        If there's a match, return user instance. Otherwise, return False."""
+        u = User.query.filter_by(username=username)
         
+        if u and bcrypt.check_password_hash(u.password, pwd):
+            return u
+        else:
+            return False

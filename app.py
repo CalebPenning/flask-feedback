@@ -26,7 +26,7 @@ def register_page():
     form = AddUserForm()
     
     if form.validate_on_submit():
-        new_user = User.register_user()
+        new_user = User.register_user(form=form)
         db.session.add(new_user)
         
         try:
@@ -46,12 +46,29 @@ def register_page():
 def login_user():
     form = LoginForm()
     if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
         
+        user = User.authenticate(username, password)
+        
+        if user:
+            flash(f"Welcome back, {user.username}.", "info")
+            session['user_id'] = user.username
+            return redirect('/secret')
+        
+        else:
+            form.username.errors = ['Invalid username or password.']
+    
+    if 'user_id' in session:
+        return redirect('/secret')
+    
+    return render_template('login.html', form=form)
 
 @app.route('/secret')
 def show_secret_page():
     if 'user_id' in session:
-        user = User.query.filter(username=session['user_id']).first()
+        username = session['user_id']
+        user = User.query.filter_by(username=username).first()
         return render_template('secret.html', user=user)
     
     flash("Please login first", "danger")
