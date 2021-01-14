@@ -13,7 +13,7 @@ class User(db.Model):
     """Creates user instance for our db/app"""
     __tablename__ = 'users'
     
-    username = db.Column(db.Text(20),
+    username = db.Column(db.Text,
                          primary_key=True,
                          unique=True,
                          nullable=False)
@@ -21,15 +21,17 @@ class User(db.Model):
     password = db.Column(db.Text,
                          nullable=False)
     
-    email = db.Column(db.Text(50),
+    email = db.Column(db.Text,
                       nullable=False,
                       unique=True)
     
-    first_name = db.Column(db.Text(30),
-                           nullable=False)
+    first_name = db.Column(db.Text,
+                           nullable=False,
+                           default="")
     
-    last_name = db.Column(db.Text(30),
-                           nullable=False)
+    last_name = db.Column(db.Text,
+                           nullable=False,
+                           default="")
     
     def __repr__(self):
         u = self
@@ -51,3 +53,7 @@ class User(db.Model):
         hashed_utf8 = hashed.decode("utf8")
         
         return cls(username=username, password=hashed_utf8, email=email, first_name=first_name, last_name=last_name)
+    
+    @classmethod
+    def authenticate(cls, username, pwd):
+        

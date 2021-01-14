@@ -1,6 +1,6 @@
 from flask import Flask, flash, request, redirect, render_template, jsonify, session
 from models import User, db, bcrypt, connect_db
-from forms import AddUserForm
+from forms import AddUserForm, LoginForm
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 import os
@@ -15,6 +15,7 @@ app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 debug = DebugToolbarExtension(app)
 
 connect_db(app)
+db.create_all()
 
 @app.route('/')
 def index_route():
@@ -39,4 +40,19 @@ def register_page():
         flash("Account created successfully!", "success")
         return redirect('/secret')
     
-    return render_template('register.html', form=form)        
+    return render_template('register.html', form=form)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login_user():
+    form = LoginForm()
+    if form.validate_on_submit():
+        
+
+@app.route('/secret')
+def show_secret_page():
+    if 'user_id' in session:
+        user = User.query.filter(username=session['user_id']).first()
+        return render_template('secret.html', user=user)
+    
+    flash("Please login first", "danger")
+    redirect('/login')
