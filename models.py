@@ -35,7 +35,7 @@ class User(db.Model):
         return f"<User: {u.username}, Email: {u.email}, Name: {u.first_name} {u.last_name}>"
     
     @classmethod
-    def sign_up(cls):
+    def register_user(cls):
         """Sign up user with hashed password"""
         # Grab all form inputs
         username = form.username.data

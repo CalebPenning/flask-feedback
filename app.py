@@ -1,4 +1,6 @@
 from flask import Flask, flash, request, redirect, render_template, jsonify, session
+from models import User, db, bcrypt, connect_db
+from forms import AddUserForm
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 import os
@@ -12,8 +14,15 @@ app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'itsasecret')
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 debug = DebugToolbarExtension(app)
 
+connect_db(app)
+
 @app.route('/')
-def placeholder():
-    return """
-    I'm holding the place of our homepage for now.
-    """
+def index_route():
+    return redirect('/register')
+
+@app.route('/register', methods=['GET', 'POST'])
+def register_page():
+    form = AddUserForm()
+    
+    if form.validate_submit():
+        pass
