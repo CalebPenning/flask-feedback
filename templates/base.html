@@ -9,6 +9,33 @@
     <title>{% block title %}{% endblock %} - Flask Feedback</title>
 </head>
 <body>
+    {% block nav %}
+    <nav class="navbar navbar-light bg-primary justify-content-between">
+        <div class="container">
+            <a href="/" class="navbar-brand text-light">Flask Feedback</a>
+        <ul class="nav navbar-nav flex-row float-right">
+            {% if session['user_id'] %}
+            <li class="nav-item">
+                <a href="/logout" class="nav-link text-light">Log out</a>
+            </li>
+            {% else %}
+            <li class="nav-item">
+                <a href="/login" class="nav-link pr-3 text-light">Log In</a>
+            </li>
+            <li class="nav-item">
+                <a href="/register" class="nav-link text-light">Register</a>
+            </li>
+            {% endif %}            
+        </ul>
+        </div>
+    </nav>
+    {% endblock %}
+
+    <div class="container" style="margin-top: 2em;">
+    {% for cat, msg in get_flashed_messages(with_categories=True) %}
+    <div class="alert alert-{{cat}}">{{ msg }}</div>
+    {% endfor %}
+
     <div class="container">
     {% block content %}
     {% endblock %}

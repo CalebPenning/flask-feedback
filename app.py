@@ -64,6 +64,12 @@ def login_user():
     
     return render_template('login.html', form=form)
 
+@app.route('/logout')
+def logout_user():
+    session.pop('user_id')
+    flash("Goodbye!", "primary")
+    return redirect('/login')
+
 @app.route('/secret')
 def show_secret_page():
     if 'user_id' in session:
@@ -72,4 +78,4 @@ def show_secret_page():
         return render_template('secret.html', user=user)
     
     flash("Please login first", "danger")
-    redirect('/login')
+    return redirect('/login')

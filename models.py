@@ -58,7 +58,7 @@ class User(db.Model):
     def authenticate(cls, username, pwd):
         """Validate that the user exists in our database, then compare passwords. 
         If there's a match, return user instance. Otherwise, return False."""
-        u = User.query.filter_by(username=username)
+        u = User.query.filter_by(username=username).first()
         
         if u and bcrypt.check_password_hash(u.password, pwd):
             return u
