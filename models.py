@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
+import email_validator
 
 db = SQLAlchemy()
 bcrypt = Bcrypt()
@@ -24,10 +25,10 @@ class User(db.Model):
                       nullable=False,
                       unique=True)
     
-    first_name = db.Column(db.Column(30),
+    first_name = db.Column(db.Text(30),
                            nullable=False)
     
-    last_name = db.Column(db.Column(30),
+    last_name = db.Column(db.Text(30),
                            nullable=False)
     
     def __repr__(self):

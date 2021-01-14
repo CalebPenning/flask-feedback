@@ -24,5 +24,19 @@ def index_route():
 def register_page():
     form = AddUserForm()
     
-    if form.validate_submit():
-        pass
+    if form.validate_on_submit():
+        new_user = User.register_user()
+        db.session.add(new_user)
+        
+        try:
+            db.session.commit()
+            
+        except IntegrityError:
+            form.username.errors.append('Username already exists. Choose another username.')
+            return render_template('register.html')
+        
+        session['user_id'] = new_user.username
+        flash("Account created successfully!", "success")
+        return redirect('/secret')
+    
+    return render_template('register.html', form=form)        
