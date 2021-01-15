@@ -38,7 +38,7 @@ def register_page():
         
         session['user_id'] = new_user.username
         flash("Account created successfully!", "success")
-        return redirect('/secret')
+        return redirect(f'/users/{new_user.username}')
     
     return render_template('register.html', form=form)
 
@@ -54,13 +54,13 @@ def login_user():
         if user:
             flash(f"Welcome back, {user.username}.", "info")
             session['user_id'] = user.username
-            return redirect('/secret')
+            return redirect(f'/users/{user.username}')
         
         else:
             form.username.errors = ['Invalid username or password.']
     
     if 'user_id' in session:
-        return redirect('/secret')
+        return redirect(f"/users/{session['user_id']}")
     
     return render_template('login.html', form=form)
 
@@ -79,3 +79,12 @@ def show_secret_page():
     
     flash("Please login first", "danger")
     return redirect('/login')
+
+@app.route('/users/<username>')
+def get_user_details(username):
+    if 'user_id' in session:
+        user = User.query.filter_by(username=username).first()
+        return render_template('user_details.html', user=user)
+    else:
+        flash("You do not have permission to view that page.", "warning")
+        return redirect('/login')
