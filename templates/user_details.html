@@ -9,11 +9,14 @@
     <li>Username: {{user.username}}</li>
     <li>Email: {{user.email}}</li>
     <li>Name: {{user.first_name}} {{user.last_name}}</li>
+    {% if 'user_id' in session %}
+    <li><a href="/users/{{user.username}}/feedback/add">Leave Feedback</a></li>
+    {% endif %}
 </ul>
 
 <div class="container feedback">
 <ul>
-    
+
 </ul>
 </div>
 {% endblock %}

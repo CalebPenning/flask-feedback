@@ -86,3 +86,15 @@ class Feedback(db.Model):
                        db.ForeignKey('users.username'))
     
     user = db.relationship('User', backref='feedback')
+    
+    @classmethod
+    def send_feedback(cls, form, usr):
+        curr_user = User.query.filter_by(username=usr).first()
+        username = curr_user.username
+        title = form.title.data
+        content = form.content.data
+        new_feedback = cls(title=title, content=content, username=username)
+        
+        db.session.add(new_feedback)
+        db.session.commit()
+        
