@@ -82,4 +82,7 @@ class Feedback(db.Model):
                         nullable=False,
                         unique=False)
     
-    username = db.relationship('User', backref='feedback')
+    username = db.Column(db.Text,
+                       db.ForeignKey('users.username'))
+    
+    user = db.relationship('User', backref='feedback')

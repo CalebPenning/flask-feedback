@@ -20,3 +20,8 @@ class LoginForm(FlaskForm):
     
     password = PasswordField("Password", validators=[InputRequired()])
 
+class FeedbackForm(FlaskForm):
+    title = StringField("Title", validators=[InputRequired(), Length(min=1, max=100)])
+    
+    content = TextAreaField("Feedback Body", validators=[InputRequired(), Length(min=1)])
+    

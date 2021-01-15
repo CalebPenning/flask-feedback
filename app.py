@@ -1,6 +1,6 @@
 from flask import Flask, flash, request, redirect, render_template, jsonify, session
 from models import User, db, bcrypt, connect_db
-from forms import AddUserForm, LoginForm
+from forms import AddUserForm, LoginForm, FeedbackForm
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 import os
@@ -88,3 +88,28 @@ def get_user_details(username):
     else:
         flash("You do not have permission to view that page.", "warning")
         return redirect('/login')
+    
+@app.route('/users/<username>/delete', methods=['POST'])
+def delete_ur_account(username):
+    if 'user_id' in session and username == session['user_id']:
+        user = User.query.filter_by(username=username).first()
+        db.session.delete(user)
+        db.session.commit()
+        flash("Account deleted. Sorry to see you go.", "primary")
+        return redirect('/register')
+    if 'user_id' in session:
+        flash("You don't have permission to do that.", "danger")
+        curr_user = session['user_id']
+        return redirect(f"/users/{curr_user}")
+    else:
+        flash("Must be logged in to delete account.", "warning")
+        return redirect('/login')
+
+@app.route('/users/<username>/feedback/add')
+def show_feedback_form(username):
+    if 'user_id' in session:
+        form = FeedbackForm()
+        to_user = User.query.filter_by(username=username).first()
+        from_user = User.query.filter_by(username=session['user_id']).first()
+        return render_template('feedback_form.html', to_user=to_user, from_user=from_user, form=form)
+    
