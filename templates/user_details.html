@@ -15,8 +15,26 @@
 </ul>
 
 <div class="container feedback">
-<ul>
-
-</ul>
+<h1 class="display-5">{{user.username}}'s feedback:</h1>
+    {% for fb in feedback %}
+    <div>
+    <div class="card my-4">
+        <div class="card-body">
+        <h5 class="card-title text-info">{{ fb.title }}</h5>
+        <p class="card-text">
+            {{ fb.content }}
+        </p>
+        {% if session['user_id'] == fb.username %}
+        <form action="/feedback/{{fb.id}}/delete" method="POST">
+        <button class="btn btn-sm btn-danger"><i class="fa fa-trash"></i></button>
+        </form>
+        <form action="/feedback/{{fb.id}}/update" method="GET">
+        <button class="btn btn-sm btn-info"><i class="fa fa-pencil-square"></i></button>
+        </form>
+        {% endif %}
+        </div>
+    </div>
+    </div>
+    {% endfor %}
 </div>
 {% endblock %}

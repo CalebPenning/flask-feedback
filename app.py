@@ -25,6 +25,11 @@ def index_route():
 def register_page():
     form = AddUserForm()
     
+    if 'user_id' in session:
+        username = session['user_id']
+        flash("You are already registered and signed in.", "warning")
+        return redirect(f"/users/{username}")
+    
     if form.validate_on_submit():
         new_user = User.register_user(form=form)
         db.session.add(new_user)
@@ -84,7 +89,9 @@ def show_secret_page():
 def get_user_details(username):
     if 'user_id' in session:
         user = User.query.filter_by(username=username).first()
-        return render_template('user_details.html', user=user)
+        feedback = Feedback.query.filter_by(username=username).all()
+        return render_template('user_details.html', user=user, feedback=feedback)
+    
     else:
         flash("You do not have permission to view that page.", "warning")
         return redirect('/login')
@@ -124,4 +131,28 @@ def show_feedback_form(username):
     
     flash("Please log in to send feedback", "warning")
     return redirect('/login')
+
+@app.route('/feedback/<int:feedback_id>/update', methods=['GET', 'POST'])
+def update_feedback(feedback_id):
+    feedback = Feedback.query.get_or_404(feedback_id)
+    form = FeedbackForm(obj=feedback)
+    
+    if form.validate_on_submit() and session['user_id'] == feedback.username:
+        feedback.title = form.title.data
+        feedback.content = form.content.data
+        db.session.commit()
         
+        flash("Feedback edited successfully.")
+        return redirect(f"/users/{feedback.username}")
+    
+    elif session['user_id'] == feedback.username:
+        return render_template('edit_feedback.html', form=form, feedback=feedback)
+    
+    elif 'user_id' not in session:
+        flash("Please log in first.", "warning")
+        return redirect('/login')
+    
+    else:
+        flash("You do not have permission to do anything on our site. Sign up.", "danger")
+        return redirect('/register')
+
